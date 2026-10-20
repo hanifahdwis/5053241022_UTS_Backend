@@ -1,7 +1,7 @@
 # PinjamKampus API
 
-- Nama dan NRP:
-- Persona:
+- Nama dan NRP:Hanifah Dwi Setyowati 5053241022
+- Persona:Persona C : Admin Himpunan
 - Cara menjalankan: `go run .` lalu buka http://localhost:8080
 
 ## Fitur

@@ -4,12 +4,12 @@ Catat setiap penggunaan AI yang menghasilkan kode. Jika tidak memakai AI sama se
 
 Log yang jujur tidak mengurangi nilai, sebanyak apa pun AI dipakai. Yang mengurangi nilai adalah log yang tidak sesuai dengan kode, atau isi log yang tidak bisa dijelaskan.
 
-## (Nama fitur atau fungsi, misalnya: Deteksi bentrok slot, B5)
-- Prompt: (ringkas, apa yang kamu minta)
-- Dipakai: (bagian kode yang kamu ambil, misalnya nama fungsi dan file)
-- Diubah: (apa yang kamu ubah atau perbaiki dari hasil AI, dan kenapa)
+## (Validasi tanggal, B2)
+- Prompt: time.Parse saja cukup untuk validasi tanggal dengan format YYYY-MM-DD, termasuk tanggal yang tidak valid?
+- Dipakai: fungsi tanggalValid pada helper.go.
+- Diubah: menambahkan pemeriksaan hasil format ulang tanggal agar input harus sesuai format dan tanggal kalender yang valid.
 
-## (Entri berikutnya)
-- Prompt:
-- Dipakai:
-- Diubah:
+## (Penerapan filter, B3)
+- Prompt: bagaimana cara penerapan filter di daftarPeminjaman?
+- Dipakai: fungsi daftarPeminjaman pada file B3handler.go
+- Diubah: menerapkan filter sumber_daya_id, tanggal, dan status secara berurutan
