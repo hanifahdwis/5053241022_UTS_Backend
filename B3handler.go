@@ -15,8 +15,12 @@ func (a *App) daftarPeminjaman(w http.ResponseWriter, r *http.Request) {
 
 	if nilai := query.Get("sumber_daya_id"); nilai != "" {
 		id, err := strconv.Atoi(nilai)
-		if err != nil {
-			kirimError(w, http.StatusBadRequest, "sumber_daya_id harus berupa angka")
+		if err != nil || id < 1 {
+			kirimError(
+				w,
+				http.StatusBadRequest,
+				"sumber_daya_id harus berupa angka positif",
+			)
 			return
 		}
 
@@ -25,6 +29,15 @@ func (a *App) daftarPeminjaman(w http.ResponseWriter, r *http.Request) {
 
 	tanggal := strings.TrimSpace(query.Get("tanggal"))
 	status := strings.TrimSpace(query.Get("status"))
+
+	if tanggal != "" && !tanggalValid(tanggal) {
+		kirimError(
+			w,
+			http.StatusBadRequest,
+			"Tanggal filter harus valid dengan format YYYY-MM-DD",
+		)
+		return
+	}
 
 	for _, p := range a.peminjaman {
 		if sumberDayaID != nil && p.SumberDayaID != *sumberDayaID {
@@ -52,13 +65,21 @@ func (a *App) daftarPeminjaman(w http.ResponseWriter, r *http.Request) {
 func (a *App) detailPeminjaman(w http.ResponseWriter, r *http.Request) {
 	id, err := ambilID(r)
 	if err != nil {
-		kirimError(w, http.StatusBadRequest, "ID harus berupa angka positif")
+		kirimError(
+			w,
+			http.StatusBadRequest,
+			"ID harus berupa angka positif",
+		)
 		return
 	}
 
 	index := a.cariPeminjaman(id)
 	if index == -1 {
-		kirimError(w, http.StatusNotFound, "Peminjaman tidak ditemukan")
+		kirimError(
+			w,
+			http.StatusNotFound,
+			"Peminjaman tidak ditemukan",
+		)
 		return
 	}
 

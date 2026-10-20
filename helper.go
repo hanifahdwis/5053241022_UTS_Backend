@@ -62,7 +62,6 @@ func (a *App) cariSumberDaya(id int) int {
 			return i
 		}
 	}
-
 	return -1
 }
 
@@ -72,6 +71,88 @@ func (a *App) cariPeminjaman(id int) int {
 			return i
 		}
 	}
-
 	return -1
+}
+
+func (a *App) validasiPeminjaman(
+	sumberDayaID int,
+	peminjam string,
+	tanggal string,
+	slotMulai int,
+	slotSelesai int,
+	jumlah int,
+) string {
+	peminjam = strings.TrimSpace(peminjam)
+	tanggal = strings.TrimSpace(tanggal)
+
+	if !teksValid(peminjam, 50) {
+		return "Peminjam wajib diisi dan maksimal 50 karakter"
+	}
+
+	if !tanggalValid(tanggal) {
+		return "Tanggal harus valid dengan format YYYY-MM-DD"
+	}
+
+	if slotMulai < 1 || slotMulai > 8 ||
+		slotSelesai < 1 || slotSelesai > 8 ||
+		slotMulai > slotSelesai {
+		return "Slot harus 1 sampai 8 dan slot mulai tidak boleh melebihi slot selesai"
+	}
+
+	index := a.cariSumberDaya(sumberDayaID)
+	if index == -1 {
+		return "Sumber daya tidak ditemukan"
+	}
+
+	if jumlah < 1 || jumlah > a.sumberDaya[index].Stok {
+		return "Jumlah harus antara 1 dan stok sumber daya"
+	}
+
+	return ""
+}
+
+func (a *App) adaBentrok(
+	sumberDayaID int,
+	tanggal string,
+	slotMulai int,
+	slotSelesai int,
+	jumlah int,
+	abaikanID int,
+) bool {
+	index := a.cariSumberDaya(sumberDayaID)
+	if index == -1 {
+		return true
+	}
+
+	stok := a.sumberDaya[index].Stok
+
+	for slot := slotMulai; slot <= slotSelesai; slot++ {
+		totalTerpakai := 0
+
+		for _, p := range a.peminjaman {
+			if p.ID == abaikanID {
+				continue
+			}
+
+			if p.SumberDayaID != sumberDayaID ||
+				p.Tanggal != tanggal {
+				continue
+			}
+
+			if p.Status != "diajukan" &&
+				p.Status != "disetujui" {
+				continue
+			}
+
+			if slot >= p.SlotMulai && slot <= p.SlotSelesai {
+				totalTerpakai += p.Jumlah
+			}
+		}
+
+		if totalTerpakai+jumlah > stok {
+			return true
+		}
+	}
+
+	return false
 }

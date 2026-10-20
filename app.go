@@ -19,6 +19,8 @@ func NewHandler() http.Handler {
 	mux.HandleFunc("POST /peminjaman", app.buatPeminjaman)
 	mux.HandleFunc("GET /peminjaman", app.daftarPeminjaman)
 	mux.HandleFunc("GET /peminjaman/{id}", app.detailPeminjaman)
+	mux.HandleFunc("PUT /peminjaman/{id}", app.ubahPeminjaman)
+	mux.HandleFunc("DELETE /peminjaman/{id}", app.hapusPeminjaman)
 
 	return mux
 }

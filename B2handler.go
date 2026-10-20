@@ -37,31 +37,33 @@ func (a *App) buatPeminjaman(w http.ResponseWriter, r *http.Request) {
 	slotSelesai := *input.SlotSelesai
 	jumlah := *input.Jumlah
 
-	if !teksValid(peminjam, 50) {
-		kirimError(w, http.StatusBadRequest, "Peminjam wajib diisi dan maksimal 50 karakter")
+	pesan := a.validasiPeminjaman(
+		sumberDayaID,
+		peminjam,
+		tanggal,
+		slotMulai,
+		slotSelesai,
+		jumlah,
+	)
+
+	if pesan != "" {
+		kirimError(w, http.StatusBadRequest, pesan)
 		return
 	}
 
-	if !tanggalValid(tanggal) {
-		kirimError(w, http.StatusBadRequest, "Tanggal harus valid dengan format YYYY-MM-DD")
-		return
-	}
-
-	if slotMulai < 1 || slotMulai > 8 ||
-		slotSelesai < 1 || slotSelesai > 8 ||
-		slotMulai > slotSelesai {
-		kirimError(w, http.StatusBadRequest, "Slot harus 1 sampai 8 dan slot mulai tidak boleh melebihi slot selesai")
-		return
-	}
-
-	index := a.cariSumberDaya(sumberDayaID)
-	if index == -1 {
-		kirimError(w, http.StatusBadRequest, "Sumber daya tidak ditemukan")
-		return
-	}
-
-	if jumlah < 1 || jumlah > a.sumberDaya[index].Stok {
-		kirimError(w, http.StatusBadRequest, "Jumlah harus antara 1 dan stok sumber daya")
+	if a.adaBentrok(
+		sumberDayaID,
+		tanggal,
+		slotMulai,
+		slotSelesai,
+		jumlah,
+		0,
+	) {
+		kirimError(
+			w,
+			http.StatusConflict,
+			"Kapasitas sumber daya tidak mencukupi pada slot yang dipilih",
+		)
 		return
 	}
 
